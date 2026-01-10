@@ -1,0 +1,76 @@
+# LLM X-Ray Architecture Specification
+
+version: 1.0
+
+# =============================================================================
+# System Design
+# =============================================================================
+design:
+  pattern: "Local Proxy with TUI Controller"
+  language: Python (AsyncIO)
+  proxy_core: mitmproxy (modified for LLM protocols)
+  ui_framework: Textual
+
+# =============================================================================
+# Components
+# =============================================================================
+components:
+
+  # ---------------------------------------------------------------------------
+  # The Interceptor (Proxy Layer)
+  # ---------------------------------------------------------------------------
+  proxy:
+    name: "X-Ray Interceptor"
+    description: >
+      A lightweight HTTP/S proxy that intercepts traffic to known LLM providers
+      (OpenAI, Anthropic, Azure, etc.).
+    responsibilities:
+      - Protocol detection (is this an LLM call?)
+      - Request capture (prompt, system message, tools)
+      - Response capture (stream aggregation)
+      - Latency measurement
+    data_flow:
+      - Incoming Request -> [Protocol Filter] -> [Storage] -> Upstream API
+      - Upstream Response -> [Stream Parser] -> [Storage] -> Client App
+
+  # ---------------------------------------------------------------------------
+  # The Brain (Analysis Layer)
+  # ---------------------------------------------------------------------------
+  analyzer:
+    name: "Inference Analyzer"
+    description: "Post-processing logic to derive insights from raw logs."
+    responsibilities:
+      - Token counting (approximated locally)
+      - Diff generation (difflib)
+      - Pattern matching (detecting common prompt injection/leaks)
+
+  # ---------------------------------------------------------------------------
+  # The Face (User Interface)
+  # ---------------------------------------------------------------------------
+  ui:
+    name: "X-Ray Dashboard"
+    description: "Textual-based TUI running in the developer's terminal."
+    screens:
+      - "Live Monitor": Scrolling log of active requests.
+      - "Trace Detail": Deep dive into a single interaction (Prompt vs Output).
+      - "Playground": Replay mechanism with editable parameters.
+
+  # ---------------------------------------------------------------------------
+  # Storage
+  # ---------------------------------------------------------------------------
+  storage:
+    name: "Session Store"
+    type: LocalFileSystem (JSONL / SQLite)
+    location: "~/.llm-xray/sessions/"
+    retention: "Configurable (default: 7 days)"
+
+# =============================================================================
+# Data Flow (The "X-Ray" Process)
+# =============================================================================
+flow:
+  1_intercept: "App makes request to localhost:8080 (X-Ray)"
+  2_record: "X-Ray saves raw request object"
+  3_forward: "X-Ray forwards to api.anthropic.com"
+  4_stream: "X-Ray yields chunks back to App while buffering"
+  5_finalize: "Stream ends, X-Ray saves full response object"
+  6_notify: "UI updates via internal event bus"

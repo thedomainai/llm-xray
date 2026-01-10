@@ -1,0 +1,93 @@
+# LLM X-Ray Product Specification
+# "Debug the thought process, not just the output."
+
+version: 1.0
+
+# =============================================================================
+# Product Overview
+# =============================================================================
+product:
+  name: "LLM X-Ray"
+  tagline: "Transparent Proxy & Debugger for LLM Inference"
+
+  description: >
+    LLM X-Ray is a developer tool that sits between your application and LLM providers.
+    It captures the entire inference lifecycle—Input (Context/Prompt), Process (Interception/Logging),
+    and Output (Response)—and visualizes the causal relationships in a TUI.
+    It transforms "prompt engineering" from a literary art into a logical debugging process.
+
+  vision: >
+    To eliminate the "black box" nature of building LLM applications by providing
+    observability and replayability for every token generation.
+
+# =============================================================================
+# Core Features
+# =============================================================================
+features:
+
+  # ---------------------------------------------------------------------------
+  # Transparent Interception (The Proxy)
+  # ---------------------------------------------------------------------------
+  interception:
+    name: "Zero-Config Proxy"
+    description: "Drop-in replacement for LLM API endpoints"
+    capabilities:
+      - name: "Environment Override"
+        description: "Works by simply setting OPENAI_BASE_URL or HTTPS_PROXY"
+      - name: "Stream Capture"
+        description: "Captures streaming tokens in real-time without latency penalty"
+      - name: "Metadata Injection"
+        description: "Injects tracing IDs into headers for correlation"
+
+  # ---------------------------------------------------------------------------
+  # Causality Analysis (The Debugger)
+  # ---------------------------------------------------------------------------
+  analysis:
+    name: "Causality Engine"
+    description: "Analyzes why a specific output was generated"
+    capabilities:
+      - name: "Context Attribution"
+        description: "Highlight which part of the prompt likely caused a specific output sentence"
+      - name: "Diff & Replay"
+        description: "Re-run a specific request with modified context to verify fixes"
+      - name: "Token Usage Breakdown"
+        description: "Visual heatmaps of where the budget is going"
+
+  # ---------------------------------------------------------------------------
+  # Visualization (The TUI)
+  # ---------------------------------------------------------------------------
+  visualization:
+    name: "Terminal Dashboard"
+    description: "High-performance TUI for real-time monitoring"
+    capabilities:
+      - name: "Live Stream View"
+        description: "Watch the thought process unfold in real-time"
+      - name: "Structured Log Browser"
+        description: "Navigate past interactions with filtering"
+      - name: "Side-by-Side Diff"
+        description: "Compare two inference runs visually"
+
+# =============================================================================
+# User Workflows
+# =============================================================================
+workflows:
+
+  debug_hallucination:
+    name: "Debug Hallucination"
+    steps:
+      1: "Developer notices incorrect output in their app"
+      2: "Developer opens LLM X-Ray TUI"
+      3: "Locates the specific request ID"
+      4: "Inspects the 'Effective Prompt' (final context sent to LLM)"
+      5: "Identifies conflicting information in the RAG context"
+      6: "Modifies the context locally in X-Ray and hits 'Replay'"
+      7: "Verifies the hallucination is gone"
+
+  optimize_cost:
+    name: "Optimize Context Window"
+    steps:
+      1: "Developer sees high cost alert"
+      2: "Opens Token Heatmap in X-Ray"
+      3: "Identifies a large, repetitive system prompt segment"
+      4: "Tests a shorter version using the Modifier"
+      5: "Confirms performance is maintained"

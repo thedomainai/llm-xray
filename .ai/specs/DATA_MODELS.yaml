@@ -1,0 +1,74 @@
+# LLM X-Ray Data Models
+
+version: 1.0
+
+# =============================================================================
+# Core Entities
+# =============================================================================
+entities:
+
+  # ---------------------------------------------------------------------------
+  # Trace - A single LLM interaction (Request/Response pair)
+  # ---------------------------------------------------------------------------
+  Trace:
+    description: "Represents one complete API call to an LLM provider."
+    fields:
+      trace_id:
+        type: uuid
+        required: true
+      provider:
+        type: enum
+        values: [openai, anthropic, google, local]
+      model:
+        type: string
+        example: "claude-3-opus-20240229"
+      timestamp:
+        type: datetime
+      duration_ms:
+        type: integer
+      status:
+        type: enum
+        values: [success, error, streaming]
+      
+      # The Input
+      request:
+        type: object
+        fields:
+          messages: array[Message]
+          temperature: float
+          tools: array[ToolDefinition]
+      
+      # The Output
+      response:
+        type: object
+        fields:
+          content: string
+          tool_calls: array[ToolCall]
+          usage: TokenUsage
+
+  # ---------------------------------------------------------------------------
+  # Message - Chat format standard
+  # ---------------------------------------------------------------------------
+  Message:
+    fields:
+      role:
+        type: enum
+        values: [system, user, assistant, tool]
+      content:
+        type: string | array[ContentBlock]
+      name:
+        type: string
+        optional: true
+
+  # ---------------------------------------------------------------------------
+  # Comparison - A diff between two traces
+  # ---------------------------------------------------------------------------
+  Comparison:
+    description: "The result of comparing a base trace with a modified replay."
+    fields:
+      base_trace_id: uuid
+      replay_trace_id: uuid
+      diff_score: float
+      changes:
+        type: object
+        description: "Unified diff of prompt and response"

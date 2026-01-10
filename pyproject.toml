@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llm-xray"
+version = "0.1.0"
+description = "LLM Inference Debugger & Proxy Tool - Visualize the Ghost in the Shell"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "The Domain AI Team"}
+]
+keywords = ["ai", "llm", "debugging", "proxy", "tui", "observability"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Debuggers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "textual>=0.40.0",      # For the TUI
+    "mitmproxy>=10.0.0",    # For intercepting LLM traffic
+    "rich>=13.0.0",         # For pretty printing
+    "pydantic>=2.0.0",      # For data validation
+    "click>=8.0.0",         # For CLI interface
+    "orjson>=3.9.0",        # Fast JSON processing
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+]
+
+[project.scripts]
+llm-xray = "src.main:main"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
